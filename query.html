@@ -20,6 +20,11 @@
 			var searchBy = 1;
 			var eventType = "dummy";
 			var eventID = "ID";
+			var tableHead = "<table border=\"0.5px\">";
+			var tableEnd = "</table>";
+			var tableColumn = "";
+			var columnSize = "";
+			var tableContent = "";
 			load();
 			
 			function change(into){
@@ -29,9 +34,6 @@
 			function load(){
 				var parts = window.location.search.substr(1).split("&");
 				var $_GET = {};
-				var begin = "",end = "";
-				var header = "";
-				var content = "";
 				var arr,i;
 				for (var i = 0; i < parts.length; i++) {
 					var temp = parts[i].split("=");
@@ -41,34 +43,79 @@
 				eventID = $_GET.objectID;
 				
 				if(eventType == "exam"){
-					begin = "<table border=\"0.5px\"><col width=\"200\"><col width=\"100\"><col width=\"100\"><col width=\"100\">";
-					header = "<tr id=\"columnHeader\"><th>Subject</th><th>SeatNo</th><th>Room</th><th>Time</th></tr>";
-					content = "<tr id=\"columnContent\"><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td></tr>";
-					end = "</table>";
-					document.getElementById("contentD").innerHTML = begin+header+content+end;
+					columnSize = "<col width=\"200\"><col width=\"100\"><col width=\"100\"><col width=\"100\">";
+					tableColumn = "<tr id=\"columnHeader\"><th>Subject</th><th>SeatNo</th><th>Room</th><th>Time</th></tr>";
+					tableContent = "<tr id=\"columnContent\"><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td></tr>";
+					document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
 				}
 				else{
 					var xmlhttp = new XMLHttpRequest();
-					var url = "http://127.0.0.1:80/database/getEventHeader.php?eventID="+eventID;
-					/*
+					var url = "http://127.0.0.1:80/project/getEventHeader.php?eventID="+eventID;
 					xmlhttp.onreadystatechange=function() {
 						if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 							displayResponse(xmlhttp.responseText);
 						}
 					}
 					xmlhttp.open("GET", url, true);
-					xmlhttp.send();*/
+					xmlhttp.send();
 				}
 			}
 			
 			function displayResponse(response){
-			
+				var i;
+				var arr = JSON.parse(response);
+				tableColumn = "<tr id=\"columnHeader\">";
+				tableContent = "<tr id=\"columnContent\">";
+				columnSize = "";
+				for(i=0; i < arr.length; i++){
+					columnSize += "<col width=\"200\">";
+					tableColumn += "<th>"+arr[i].HeaderTitle+"</th>";
+					tableContent += "<td align=\"center\">-</td>";
+				}
+				tableColumn += "</tr>";
+				tableContent += "</tr>";
+				document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
 			}
 			
 			function search(sKey){
 				var temp = document.getElementById("searchType");
 				var get = temp.options[temp.selectedIndex].value;
-				alert(sKey+" "+searchBy+" "+eventType+" "+eventID);
+				var xmlhttp = new XMLHttpRequest();
+				var url = "http://127.0.0.1:80/project/getStudentRecord.php?sKey="+sKey+"&searchBy="+searchBy+"&eventType="+eventType+"&eventID="+eventID;
+				//alert(url);
+				xmlhttp.onreadystatechange=function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eventType == "event") {
+						displayData(xmlhttp.responseText);
+					}
+					else if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eventType == "exam") {
+						displayDataEx(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+			
+			function displayData(response){
+				var i;
+				var arr = JSON.parse(response);
+				tableContent = "<tr id=\"columnContent\">";
+				for(i=0; i < arr.length; i++){
+					tableContent += "<td align=\"center\">"+arr[i].AttributeValue+"</td>";
+				}
+				tableContent += "</tr>";
+				document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
+			}
+			
+			function displayDataEx(response){
+				var i;
+				var arr = JSON.parse(response);
+				tableContent = "<tr id=\"columnContent\">";
+				for(i=0; i < arr.length; i++){
+					tableContent += "<td align=\"center\">"+arr[i].SubjectName+"</td><td align=\"center\">"+arr[i].SeatNo
+					+"</td><td align=\"center\">"+arr[i].Room+"</td><td align=\"center\">"+arr[i].Time+"</td>";
+				}
+				tableContent += "</tr>";
+				document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
 			}
 		</script>
 	</body>
