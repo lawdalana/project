@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Query</h1>
+		Search by:&nbsp;
+		<select id="searchType" onchange="javascript: change(this.options[this.selectedIndex].value );" required>
+		<option value="" disabled="disabled" selected="selected">Selected</option>
+		<option value="1">AppID</option>
+		<option value="2">StudentID</option>
+		</select>
+		<br>
+		<form onsubmit="return false;">
+			Search ID:&nbsp; <input type="text" id="formsKey" name="sKey" placeholder="Enter AppID or StudentID" size="35" required>
+			<button type="button" onclick="search(document.getElementById('formsKey').value)">Search</button> 
+		</form><br>
+		<div id="contentD">
+			
+		</div>
+		<script>
+			var searchBy = 1;
+			var eventType = "dummy";
+			var eventID = "ID";
+			load();
+			
+			function change(into){
+				searchBy = into;
+			}
+			
+			function load(){
+				var parts = window.location.search.substr(1).split("&");
+				var $_GET = {};
+				var begin = "",end = "";
+				var header = "";
+				var content = "";
+				var arr,i;
+				for (var i = 0; i < parts.length; i++) {
+					var temp = parts[i].split("=");
+					$_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
+				}
+				eventType = $_GET['type'];
+				eventID = $_GET.objectID;
+				
+				if(eventType == "exam"){
+					begin = "<table border=\"0.5px\"><col width=\"200\"><col width=\"100\"><col width=\"100\"><col width=\"100\">";
+					header = "<tr id=\"columnHeader\"><th>Subject</th><th>SeatNo</th><th>Room</th><th>Time</th></tr>";
+					content = "<tr id=\"columnContent\"><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td></tr>";
+					end = "</table>";
+					document.getElementById("contentD").innerHTML = begin+header+content+end;
+				}
+				else{
+					var xmlhttp = new XMLHttpRequest();
+					var url = "http://127.0.0.1:80/database/getEventHeader.php?eventID="+eventID;
+					/*
+					xmlhttp.onreadystatechange=function() {
+						if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+							displayResponse(xmlhttp.responseText);
+						}
+					}
+					xmlhttp.open("GET", url, true);
+					xmlhttp.send();*/
+				}
+			}
+			
+			function displayResponse(response){
+			
+			}
+			
+			function search(sKey){
+				var temp = document.getElementById("searchType");
+				var get = temp.options[temp.selectedIndex].value;
+				alert(sKey+" "+searchBy+" "+eventType+" "+eventID);
+			}
+		</script>
+	</body>
+</html>
