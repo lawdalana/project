@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 $eventSelected = $_GET['eventID'];
+$conn = new mysqli("127.0.0.1", "root", "", "project_test");
 
 $query = "SELECT * FROM eventheader WHERE EventID='".$eventSelected."';";
 $result = $conn->query($query);
