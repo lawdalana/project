@@ -11,6 +11,7 @@ while($rs = $result->fetch_array(MYSQLI_ASSOC)) {
     if ($outp != "[") {$outp .= ",";}
     $outp .= '{"EventID":"'  . $rs["EventID"] . '",';
     $outp .= '"EventName":"'   . $rs["EventName"]        . '",';
+	$outp .= '"EventType":"'   . $rs["EventType"]        . '",';
     $outp .= '"LogTime":"'. $rs["LogTime"]     . '"}'; 
 }
 $outp .="]";
