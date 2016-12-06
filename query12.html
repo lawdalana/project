@@ -2,18 +2,18 @@
 <html>
 	<body>
 		<h1>Data analysis</h1>
-		<h2>Number of students in each department</h2>
+		<h2>Percentage of students that take each preliminary courses, group by application type</h2>
 		<div id="result">
 		</div>
 		<script>
 		var tableHead = "<table border=\"1px\">";
-		var columnHead = "<tr><th align=\"center\">Number of Students</th><th align=\"center\">Department</th></tr>";
+		var columnHead = "<tr><th align=\"center\">AppType</th><th align=\"center\">CourseName</th><th align=\"center\">Percentage of Students</th></tr>";
 		var columnData = "";
 		var tableEnd = "</table>";
 		loadData();
 			function loadData(){
 				var xmlhttp = new XMLHttpRequest();
-				var url = "http://127.0.0.1:80/project/getQuery2.php";
+				var url = "http://127.0.0.1:80/project/getQuery12.php";
 
 				xmlhttp.onreadystatechange=function() {
 					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -29,7 +29,7 @@
 			var i;
 			columnData = "";
 				for(i = 0; i < arr.length; i++) {
-					columnData += "<tr><td align=\"center\">"+arr[i].NumberofStudents+"</td><td align=\"center\">"+arr[i].Department+"</td></tr>"
+					columnData += "<tr><td align=\"center\">"+arr[i].AppType+"</td><td align=\"center\">"+arr[i].CourseName+"</td><td align=\"center\">"+arr[i].percent+"</td></tr>"
 				}
 				document.getElementById("result").innerHTML = tableHead+columnHead+columnData+tableEnd;
 			}
