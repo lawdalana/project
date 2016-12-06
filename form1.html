@@ -142,19 +142,7 @@ function loadTable(ProID){
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
 }
-function addID(appID,studentID,proID)
-{
-    var xmlhttp = new XMLHttpRequest();
-    var url = "http://127.0.0.1:80/project/addID.php/?studentID="+studentID+" &appID="+appID+"&programID="+proID;
-    alert(url);
-    xmlhttp.onreadystatechange=function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            displayResponseTable(xmlhttp.responseText);
-        }
-    }
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send();
-}
+
 function displayResponseSubject(response){
     var i;
     var out = "Existing Subject: <select id=\"Subject\" name=\"Subject\" class=\"required-entry\" onchange=\"javascript: EnableSubjectText(this.options[this.selectedIndex].value );loadYear(this.options[this.selectedIndex].value ); \"><option value=\"Select Subject\" >Select Subject</option>";
@@ -230,19 +218,13 @@ function displayResponseTable(response){
         }
         else{
 
-            out += '<tr><td>'+arr[i].AppID+'</td><td>'+arr[i].StudentID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"room'+arr[i].AppID+'\" id = \"room\"'+i+' SIZE = \"20\"></td><td><INPUT TYPE = \"TEXT\" Name = \"SeatNo'+arr[i].AppID+'\" id = \"seatNo\"'+i+' SIZE = \"20\"></td><td><INPUT TYPE = \"TEXT\" Name = \"Time'+arr[i].AppID+'\" id = \"time\"'+i+' SIZE = \"20\"></td></tr>';
+            out += '<tr><td>'+arr[i].AppID+'</td><td>'+arr[i].StudentID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"Room'+arr[i].AppID+'\" id = \"room\"'+i+' SIZE = \"20\"></td><td><INPUT TYPE = \"TEXT\" Name = \"SeatNo'+arr[i].AppID+'\" id = \"seatNo\"'+i+' SIZE = \"20\"></td><td><INPUT TYPE = \"TEXT\" Name = \"Time'+arr[i].AppID+'\" id = \"time\"'+i+' SIZE = \"20\"></td></tr>';
         }
     }
     out += "</table>"; 
     document.getElementById("table").innerHTML = out;
 }
-function getvalue(appID,proID)
-{
-    //alert(proID);
-    var stuID = document.getElementById("studentID").value;
-    //alert(appID);
-    addID(appID,stuID,proID);
-}
+
 
 </script>
 </body>
