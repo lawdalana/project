@@ -39,32 +39,37 @@ table tr:nth-child(even) {
             <td>AppID</td>
             <td>StudentID</td>
             <td>Delete</td>
-   
+
         </tr>
         <tr>
             <td>1</td>
-            <td><input size=25 type="text" id="AppID" name = "AppID" ></td>
-            <td><input size=25 type="text" id="StudentID" name = "StudentID"></td>
+            <td><input size=25 type="text" id="AppID" name = "AppID1" ></td>
+            <td><input size=25 type="text" id="StudentID" name = "StudentID1"></td>
             <td><input type="button" id="delbutton" value="Delete" onclick="deleteRow(this)"/></td>
         </tr>
     </table>
     <br>
+    <input size=10 type="hidden" id="maxrow" name = "i" value = "1" ><br>
     <input type="button" id="addmorebutton" value="Add More Button" onclick="insRow()"/>
+
     <br><br><input type="submit" value="Submit">
 	</div>
 
 	</div>
-	
-	<script>
 
+	<script>
+	document.getElementById("maxrow").value = 1;
+	var max_row;
 	function insRow()
 	{
+		document.getElementById("maxrow").innerHTML = len;
 	    var x=document.getElementById('POITable');
 	       // deep clone the targeted row
 	    var new_row = x.rows[1].cloneNode(true);
 	       // get the total number of rows
 	    var len = x.rows.length;
-	       // set the innerHTML of the first row 
+	       // set the innerHTML of the first row
+	    document.getElementById("maxrow").value = len;
 	    new_row.cells[0].innerHTML = len;
 
 	       // grab the input from the first cell and update its ID and value
@@ -82,6 +87,7 @@ table tr:nth-child(even) {
 	       // append the new row to the table
 	    x.appendChild( new_row );
 	    updateName();
+
 	}
 
 	function updateName(){
@@ -126,15 +132,16 @@ table tr:nth-child(even) {
 	    for(i = 0; i < arr.length; i++) {
 	        out += '<option value="'+arr[i].CourseID+'">'+arr[i].CourseName+' - '+arr[i].CourseDescription+'</option>';
 	    }
-	    out += "</select><\/script>"; 
+	    out += "</select><\/script>";
 	    document.getElementById("courselist").innerHTML = out;
+
 	}
 
 	function displayResponseTable() {
 		var i;
 		var out = "<table id = \"myTable\">";
 		for(i = 0; i < 2; i++) {
-		    out += "<tr><td>" + 
+		    out += "<tr><td>" +
 		    "<input type = \"text\" name = \"AppID"+i+"\">"+
 		    "</td><td>" +
 		    "<input type = \"text\" name = \"StudentID"+i+"\">"+
@@ -150,9 +157,3 @@ table tr:nth-child(even) {
 </form>
 </body>
 </html>
-
-
-
-
-
-
