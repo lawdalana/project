@@ -20,6 +20,7 @@
 			var searchBy = 1;
 			var eventType = "dummy";
 			var eventID = "ID";
+			var eType = "";
 			var tableHead = "<table border=\"0.5px\">";
 			var tableEnd = "</table>";
 			var tableColumn = "";
@@ -41,16 +42,23 @@
 				}
 				eventType = $_GET['type'];
 				eventID = $_GET.objectID;
-				
+				eType = $_GET.eType;
 				if(eventType == "exam"){
 					columnSize = "<col width=\"200\"><col width=\"100\"><col width=\"100\"><col width=\"100\">";
 					tableColumn = "<tr id=\"columnHeader\"><th>Subject</th><th>SeatNo</th><th>Room</th><th>Time</th></tr>";
 					tableContent = "<tr id=\"columnContent\"><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td><td align=\"center\">-</td></tr>";
 					document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
 				}
+				else if(eType == "sid"){
+					columnSize = "<col width=\"200\">";
+					tableColumn = "<tr id=\"columnHeader\"><th>StudentID</th></tr>";
+					tableContent = "<tr id=\"columnContent\"><td align=\"center\">-</td></tr>";
+					document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
+					document.getElementById("searchType").innerHTML = "<option value=\"1\">AppID</option>";
+				}
 				else{
 					var xmlhttp = new XMLHttpRequest();
-					var url = "http://127.0.0.1:80/project/getEventHeader.php?eventID="+eventID;
+					var url = "http://127.0.0.1:80/project/getEventHeader.php?eventID="+eventID+"&eType="+eType;
 					xmlhttp.onreadystatechange=function() {
 						if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 							displayResponse(xmlhttp.responseText);
@@ -81,10 +89,13 @@
 				var temp = document.getElementById("searchType");
 				var get = temp.options[temp.selectedIndex].value;
 				var xmlhttp = new XMLHttpRequest();
-				var url = "http://127.0.0.1:80/project/getStudentRecord.php?sKey="+sKey+"&searchBy="+searchBy+"&eventType="+eventType+"&eventID="+eventID;
+				var url = "http://127.0.0.1:80/project/getStudentRecord.php?sKey="+sKey+"&searchBy="+searchBy+"&eventType="+eventType+"&eventID="+eventID+"&eType="+eType;
 				//alert(url);
 				xmlhttp.onreadystatechange=function() {
-					if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eventType == "event") {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eType == "sid") {
+						displaySid(xmlhttp.responseText);
+					}
+					else if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eventType == "event") {
 						displayData(xmlhttp.responseText);
 					}
 					else if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && eventType == "exam") {
@@ -93,6 +104,16 @@
 				}
 				xmlhttp.open("GET", url, true);
 				xmlhttp.send();
+			}
+			function displaySid(response){
+				var i;
+				var arr = JSON.parse(response);
+				tableContent = "<tr id=\"columnContent\">";
+				for(i=0; i < arr.length; i++){
+					tableContent += "<td align=\"center\">"+arr[i].StudentID+"</td>";
+				}
+				tableContent += "</tr>";
+				document.getElementById("contentD").innerHTML = tableHead+columnSize+tableColumn+tableContent+tableEnd;
 			}
 			
 			function displayData(response){

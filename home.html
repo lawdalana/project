@@ -54,7 +54,7 @@
     var out = "<table>";
 
     for(i = 0; i < arr.length; i++) {
-        out += "<tr><td>" + "<a href=\"http:\\\\127.0.0.1\\project\\query.html?type=event&objectID="+arr[i].EventID+"\">"
+        out += "<tr><td>" + "<a href=\"http:\\\\127.0.0.1\\project\\query.html?type=event&objectID="+arr[i].EventID+"&eType="+arr[i].EventType+"\">"
         + arr[i].LogTime + "__________" + arr[i].EventName + "</a>"
 		+ "</td></tr>";
     }
