@@ -22,15 +22,33 @@ table tr:nth-child(even) {
 
 <title> Complex Form </title>
 <body>
-<h1> STUDENT ID ANNOUNCEMENT</h1>
-<form action="updateID.php" method="post" >
-	<head>
+<h1> Exam Room ANNOUNCEMENT</h1>
+<form action="" method="post" >
+    <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     </head>
     <title>Dynamic Drop Down List</title>
     <body>
-    <div id="facultyList"></div>
-    <br><br>
+    <div id="subjectList"></div>
+    <br>
+    <div id="yearList">Year: 
+        <script>
+        document.write('<select name="Year" id="Year"><option value="">Select Year</option></select>')
+        </script>
+    </div>
+    <br>
+    <div id="subjectText">Subject: 
+        <script>
+        document.write('<input type="text" name="subject"><br>Year: <input type="text" name="Year">')
+        </script>
+    </div>
+    <br>
+    <div id="facultyList">Faculty:
+        <script>
+        document.write('<select name="Faculty" id="Faculty"><option value="">Select Faculty</option></select>')
+        </script>
+    </div>
+    <br>
     <div id="departmentList">Department: 
         <script>
         document.write('<select name="Department" id="Department"><option value="">Select Department</option></select>')
@@ -51,11 +69,34 @@ table tr:nth-child(even) {
         </script> 
     </div>  
 
-	<br><INPUT TYPE = "submit" value = "Submit">
+    <br><INPUT TYPE = "submit" value = "Submit">
 </form>
 <script>
-loadFaculty();
+loadSubject();
 
+
+function loadSubject(){
+    var xmlhttp = new XMLHttpRequest();
+    var url = "http://127.0.0.1:80/project/getSubject.php";
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            displayResponseSubject(xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+function loadYear(SubID){
+    var xmlhttp = new XMLHttpRequest();
+    var url = "http://127.0.0.1:80/project/getYear.php/?subjectID="+SubID;
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            displayResponseYear(xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
 function loadFaculty(){
     var xmlhttp = new XMLHttpRequest();
     var url = "http://127.0.0.1:80/project/getFaculty.php";
@@ -91,7 +132,9 @@ function loadProgram(DeID){
 }
 function loadTable(ProID){
     var xmlhttp = new XMLHttpRequest();
-    var url = "http://127.0.0.1:80/project/getTable.php/?programID="+ProID;
+    var selector = document.getElementById('Year');
+    var year = selector.option[selector.selectedIndex].value;
+    var url = "http://127.0.0.1:80/project/getTableForm1.php/?programID="+ProID"&year="+year;
     xmlhttp.onreadystatechange=function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             displayResponseTable(xmlhttp.responseText);
@@ -100,6 +143,49 @@ function loadTable(ProID){
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
 }
+function addID(appID,studentID,proID)
+{
+    var xmlhttp = new XMLHttpRequest();
+    var url = "http://127.0.0.1:80/project/addID.php/?studentID="+studentID+" &appID="+appID+"&programID="+proID;
+    alert(url);
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            displayResponseTable(xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+function displayResponseSubject(response){
+    var i;
+    var out = "Existing Subject: <select id=\"Subject\" name=\"Subject\" class=\"required-entry\" onchange=\"javascript: EnableSubjectText(this.options[this.selectedIndex].value );loadYear(this.options[this.selectedIndex].value ); \"><option value=\"Select Subject\" >Select Subject</option>";
+    var arr = JSON.parse(response);
+    for(i = 0; i < arr.length; i++) {
+        out += '<option value="'+arr[i].SubjectID+'">'+arr[i].SubjectName+'</option>';
+    }
+    out += "</select> *[Optional used for editing exam room records]";
+    document.getElementById("subjectList").innerHTML = out;
+}
+function displayResponseYear(response){
+    var i;
+    var out = "Year: <select id=\"Year\" name=\"Year\" class=\"required-entry\" onchange=\"javascript: EnableSubjectText(this.options[this.selectedIndex].value ); loadFaculty();\"><option value=\"Select Year\" >Select Year</option>";
+    var arr = JSON.parse(response);
+    for(i = 0; i < arr.length; i++) {
+        out += '<option value="'+arr[i].Year+'">'+arr[i].Year+'</option>';
+    } 
+    out += "</select>"; 
+    document.getElementById("yearList").innerHTML = out;
+}
+function EnableSubjectText(response){
+    var out = "Subject: <input type=\"text\" name=\"subject\"";
+    if(response == "Select Year" || response == "Select Subject" ){
+      out += " ><br>Year: <input type=\"text\" name=\"Year\">";
+    }
+    else out += " disabled><br>Year: <input type=\"text\" name=\"Year\" disabled>[disabled]";
+    document.getElementById("subjectText").innerHTML = out;
+    
+}
+
 function displayResponseFaculty(response){
     var i;
     var out = "Faculty: <select id=\"Faculty\" name=\"Faculty\" class=\"required-entry\" onchange=\"javascript: loadDepartment(this.options[this.selectedIndex].value );\" ><option value=\"Select Faculty\">Select Faculty</option>";
@@ -107,21 +193,21 @@ function displayResponseFaculty(response){
     for(i = 0; i < arr.length; i++) {
         out += '<option value="'+arr[i].FacultyID+'">'+arr[i].Faculty+'</option>';
     }
-    out += "</select><\/script>"; 
+    out += "</select>"; 
     document.getElementById("facultyList").innerHTML = out;
 }
-//ertyrt
 function displayResponseDepartment(response){
 
     var i;
-    var out = "Department:<select id=\"Department\" name=\"Department\" class=\"required-entry\" onchange=\"javascript: loadProgram(this.options[this.selectedIndex].value );\" ><option value=\"Select Department\">Select Department</option>";
+    var out = "Department:<select id=\"Department\" name=\"Department\" class=\"required-entry\" onchange=\"javascript: loadProgram(this.options[this.selectedIndex].value );\"  ><option value=\"Select Department\">Select Department</option>";
     var arr = JSON.parse(response);
     for(i = 0; i < arr.length; i++) {
         out += '<option value="'+arr[i].DepartmentID+'">'+arr[i].DepartmentName+'</option>';
     }
-    out += "</select><\/script>"; 
+    out += "</select>"; 
     document.getElementById("departmentList").innerHTML = out;
 }
+
 function displayResponseProgram(response){
 
     var i;
@@ -130,7 +216,7 @@ function displayResponseProgram(response){
     for(i = 0; i < arr.length; i++) {
         out += '<option value="'+arr[i].ProgramID+'">'+arr[i].ProgramName+'</option>';
     }
-    out += "</select><\/script>"; 
+    out += "</select>"; 
     document.getElementById("programList").innerHTML = out;
 }
 function displayResponseTable(response){
@@ -144,15 +230,21 @@ function displayResponseTable(response){
          out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td>'+arr[i].StudentID+'</td><td></td></tr>';
         }
         else{
-            //out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"studentID\" id = \"studentID\" SIZE = \"20\"></td><td><button onclick=getvalue('+arr[i].AppID+',\"'+arr[i].ProgramID+'\")>ADD</button></td></tr>';
-            out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"'+arr[i].AppID+'\" id = \"studentID'+i+'\" value = \"\" SIZE = \"20\"></td></tr>';
+
+            out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"studentID\" id = \"studentID\"'+i+' SIZE = \"20\"></td></tr>';
                   
         }
     }
-    out += "<\/script>"; 
+    out += "</table>"; 
     document.getElementById("table").innerHTML = out;
 }
-
+function getvalue(appID,proID)
+{
+    //alert(proID);
+    var stuID = document.getElementById("studentID").value;
+    //alert(appID);
+    addID(appID,stuID,proID);
+}
 
 </script>
 </body>
