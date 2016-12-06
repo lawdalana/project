@@ -23,7 +23,7 @@ table tr:nth-child(even) {
 <title> Complex Form </title>
 <body>
 <h1> STUDENT ID ANNOUNCEMENT</h1>
-<form action="" method="post" >
+<form action="updateID.php" method="post" >
 	<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     </head>
@@ -46,30 +46,16 @@ table tr:nth-child(even) {
     </body>
     <div id="table"> Table: 
         <script>
-        document.write('<table id="myTable"><tr><th>AppID</th><th>Name</th><th>Student ID</th></tr><tr><td></td><td></td><td></td><td><button onclick="addRecord()">ADD</button></td></tr></table>')
+        //document.write('<table id="myTable"><tr><th>AppID</th><th>Name</th><th>Student ID</th></tr><tr><td></td><td></td><td></td><td><button onclick="addRecord()">Edit</button></td></tr></table>')
+        document.write('<table id="myTable"><tr><th>AppID</th><th>Name</th><th>Student ID</th></tr><tr><td></td><td></td><td></td></tr></table>')
         </script> 
     </div>  
-	<br><button onclick="myCreateFunction()">Create row</button>
-	<button onclick="myDeleteFunction()">Delete row</button>
+
 	<br><INPUT TYPE = "submit" value = "Submit">
 </form>
 <script>
-i=2;
 loadFaculty();
-function myCreateFunction() {
-    var table = document.getElementById("myTable");
-    var row = table.insertRow(i);
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell2 = row.insertCell(2);
-    //cell1.innerHTML = <INPUT TYPE = "TEXT" Name = "appid/studentid" SIZE = "20">;
-	//cell2.innerHTML = <INPUT TYPE = "TEXT" Name = "column1" SIZE = "20">;
-    i++;
-}
-function myDeleteFunction() {
-    document.getElementById("myTable").deleteRow(i-1);
-    i--;
-}
+
 function loadFaculty(){
     var xmlhttp = new XMLHttpRequest();
     var url = "http://127.0.0.1:80/project/getFaculty.php";
@@ -166,12 +152,13 @@ function displayResponseTable(response){
     var out = '<table id=\"myTable\"><tr><th>AppID</th><th>Name</th><th>Student ID</th></tr>';
     var arr = JSON.parse(response);
     for(i = 0; i < arr.length; i++) {
-        alert("555");
+        //("555");
         if(arr[i].StudentID!=""){
          out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td>'+arr[i].StudentID+'</td><td></td></tr>';
         }
         else{
-            out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"studentID\" id = \"studentID\" SIZE = \"20\"></td><td><button onclick=getvalue('+arr[i].AppID+',\"'+arr[i].ProgramID+'\")>ADD</button></td></tr>';
+            //out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"studentID\" id = \"studentID\" SIZE = \"20\"></td><td><button onclick=getvalue('+arr[i].AppID+',\"'+arr[i].ProgramID+'\")>ADD</button></td></tr>';
+            out += '<tr><td>'+arr[i].AppID+'</td><td>'+ arr[i].fName+' '+arr[i].lName+'</td><td><INPUT TYPE = \"TEXT\" Name = \"'+arr[i].AppID+'\" id = \"studentID'+i+'\" value = \"\" SIZE = \"20\"></td></tr>';
                   
         }
     }
@@ -180,9 +167,9 @@ function displayResponseTable(response){
 }
 function getvalue(appID,proID)
 {
-    alert(proID);
+    //alert(proID);
     var stuID = document.getElementById("studentID").value;
-    alert(appID);
+    //alert(appID);
     addID(appID,stuID,proID);
 }
 
