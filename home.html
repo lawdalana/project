@@ -4,7 +4,7 @@
 </head>
 <body>
 <div id="content">
-	<a href="\login.html">Staff & Teacher Login</a>
+	<a href="/project/login.html">Staff & Teacher Login</a>
 	<table border="1px">
 		<col width="400">
 		<col width="400">
@@ -47,7 +47,7 @@
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
 	}
-	
+
 	function displayResponse(response) {
     var arr = JSON.parse(response);
     var i;
@@ -65,7 +65,7 @@
 	function loadExams(){
 	var xmlhttp = new XMLHttpRequest();
 	var url = "http://127.0.0.1:80/project/getExams.php";
-	
+
 	xmlhttp.onreadystatechange=function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			displayResponseEx(xmlhttp.responseText);
@@ -74,12 +74,12 @@
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
 	}
-	
+
 	function displayResponseEx(responseEx){
 	var i;
     var out = "<table>";
 	var arr = JSON.parse(responseEx);
-	
+
     for(i = 0; i < arr.length; i++) {
         out += "<tr><td>" + "<a href=\"http:\\\\127.0.0.1\\project\\query.html?type=exam&objectID="+arr[i].SubjectID+"\">"
         + arr[i].SubjectName + "__________ED_year:" + arr[i].ED_year + "</a>"
@@ -88,8 +88,8 @@
     out += "</table>";
 	document.getElementById("listExam").innerHTML = out;
 	}
-	
+
 </script>
-	
+
 </body>
 </html>
