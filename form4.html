@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+h1 {
+    border-bottom: 3px solid #cc9900;
+    color: #996600;
+    font-size: 30px;
+}
+table, th , td {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding: 5px;
+}
+table tr:nth-child(odd) {
+    background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+</style>
+</head>
+<title> Complex Form 4</title>
+<h1> Student_Course</h1>
+<form action="addtocourse.php" method="post" >
+
+	<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <title>Drop Down List</title>
+    <body>
+    <div id="courselist"></div>
+    <br><br>
+    <p>Table</p>
+	<div id="POItablediv">
+    <table id="POITable" border="1">
+        <tr>
+            <td>Number</td>
+            <td>AppID</td>
+            <td>StudentID</td>
+            <td>Delete</td>
+   
+        </tr>
+        <tr>
+            <td>1</td>
+            <td><input size=25 type="text" id="AppID" name = "AppID" ></td>
+            <td><input size=25 type="text" id="StudentID" name = "StudentID"></td>
+            <td><input type="button" id="delbutton" value="Delete" onclick="deleteRow(this)"/></td>
+        </tr>
+    </table>
+    <br>
+    <input type="button" id="addmorebutton" value="Add More Button" onclick="insRow()"/>
+    <br><br><input type="submit" value="Submit">
+	</div>
+
+	</div>
+	
+	<script>
+
+	function insRow()
+	{
+	    var x=document.getElementById('POITable');
+	       // deep clone the targeted row
+	    var new_row = x.rows[1].cloneNode(true);
+	       // get the total number of rows
+	    var len = x.rows.length;
+	       // set the innerHTML of the first row 
+	    new_row.cells[0].innerHTML = len;
+
+	       // grab the input from the first cell and update its ID and value
+	    var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+	    inp1.id += len;
+	    //inp1.name += len;
+	    inp1.value = '';
+
+	       // grab the input from the first cell and update its ID and value
+	    var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+	    inp2.id += len;
+	    //inp2.name += len;
+	    inp2.value = '';
+
+	       // append the new row to the table
+	    x.appendChild( new_row );
+	    updateName();
+	}
+
+	function updateName(){
+		var table=document.getElementById('POITable');
+		var x=1;
+		var len = table.rows.length;
+		for (x=1;x<=len;x++){
+			var row = table.rows[x];
+			row.cells[0].innerHTML = x;
+			var inp1 = row.cells[1].getElementsByTagName('input')[0];
+			inp1.name = 'AppID'+ x;
+			var inp2 = row.cells[2].getElementsByTagName('input')[0];
+			inp2.name = 'StudentID'+x;
+		}
+	}
+
+	function deleteRow(row)
+	{
+    var i=row.parentNode.parentNode.rowIndex;
+    	if(i!=1)	document.getElementById('POITable').deleteRow(i);
+    	updateName();
+	}
+	loadCourse();
+	//displayResponseTable();
+	function loadCourse(){
+		var xmlhttp = new XMLHttpRequest();
+		var url = "http://127.0.0.1/project/coursequery.php";
+
+		xmlhttp.onreadystatechange=function() {
+		    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		        displayResponseCourse(xmlhttp.responseText);
+		    }
+		}
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+	}
+
+	function displayResponseCourse(response) {
+	    var i;
+	    var out = "Course: <select id=\"Course\" name=\"Course\" class=\"required-entry\" onchange=\"javascript: displayResponseTable();\" ><option value=\"Select Course\">Select Course</option>";
+	    var arr = JSON.parse(response);
+	    for(i = 0; i < arr.length; i++) {
+	        out += '<option value="'+arr[i].CourseID+'">'+arr[i].CourseName+' - '+arr[i].CourseDescription+'</option>';
+	    }
+	    out += "</select><\/script>"; 
+	    document.getElementById("courselist").innerHTML = out;
+	}
+
+	function displayResponseTable() {
+		var i;
+		var out = "<table id = \"myTable\">";
+		for(i = 0; i < 2; i++) {
+		    out += "<tr><td>" + 
+		    "<input type = \"text\" name = \"AppID"+i+"\">"+
+		    "</td><td>" +
+		    "<input type = \"text\" name = \"StudentID"+i+"\">"+
+		    "</td></tr>";
+		}
+		out += "</table>";
+		out += "<br><input type=\"submit\" value=\"Submit\">";
+		document.getElementById("table").innerHTML = out;
+	}
+	</script>
+	<br><br>
+
+</form>
+</body>
+</html>
+
+
+
+
+
+
