@@ -13,21 +13,21 @@ echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 $sql = "";
 if($eventType == "event"){
-	$sql .= "SELECT * FROM eventdetails WHERE EventID = ".$eventID." AND ";
+	$sql .= "SELECT * FROM eventdetails e JOIN student st ON e.AppID = st.AppID WHERE EventID = ".$eventID." AND ";
 	if($searchType == 1){
-		$sql .= "AppID = ".$key.";";
+		$sql .= "st.AppID = ".$key.";";
 	}
 	else{
-		$sql .= "StudentID = ".$key.";";
+		$sql .= "st.StudentID = ".$key.";";
 	}
 } 
 else{
-	$sql .= "SELECT AppID,s.SubjectID AS SubjectID,SubjectName,SeatNo,Room,e.Time AS Time FROM examroom e JOIN subject s ON e.SubjectID = s.SubjectID WHERE ";
+	$sql .= "SELECT e.AppID AS AppID,s.SubjectID AS SubjectID,SubjectName,SeatNo,Room,e.Time AS Time FROM examroom e JOIN subject s ON e.SubjectID = s.SubjectID JOIN student st ON e.AppID = st.AppID WHERE ";
 	if($searchType == 1){
-		$sql .= "AppID = ".$key." AND ";
+		$sql .= "st.AppID = ".$key." AND ";
 	}
 	else{
-		$sql .= "StudentID = ".$key." AND ";
+		$sql .= "st.StudentID = ".$key." AND ";
 	}
 	$sql .= "s.SubjectID = '".$eventID."' AND s.ED_year = ".$curYear.";";
 }
