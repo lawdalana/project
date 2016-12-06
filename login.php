@@ -18,6 +18,11 @@ else
 {
 		session_write_close();
 		echo "Login Success!";
+		echo "Redirecting";
+		echo "<form name=\"staffType\" action=\"staffDataMenu.php\" method=\"post\"><input type=\"hidden\" name=\"staffType\" value=\"".$objResult['StaffTypeID']."\"></form>";
+		echo "<script>";
+		echo "document.staffType.submit();";
+		echo "</script>";
 }
 mysql_close();
 ?>
