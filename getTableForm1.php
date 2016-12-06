@@ -5,7 +5,7 @@ $con=mysqli_connect("127.0.0.1","root","","project_test");
 if (mysqli_connect_errno()) {
 echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
-$sql = "SELECT s.AppID, s.StudentID, s.fName, s.lName, e.Room, e.SeatNo, e.Time  FROM student s LEFT JOIN examroom e  ON e.AppID = s.AppID AND s.ProgramID = '".$programID."'";
+$sql = "SELECT s.AppID, s.StudentID, s.fName, s.lName, e.Room, e.SeatNo, e.Time  FROM student s LEFT JOIN examroom e  ON e.AppID = s.AppID WHERE s.ProgramID = '".$programID."'";
 $result = $con->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
