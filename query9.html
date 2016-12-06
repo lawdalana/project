@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Data analysis</h1>
+		<h2>List of examination rooms a specified student has to go take his/her exam</h2>
+		Enter appID: <input type="text" id="searchID"> <button type="button" onclick="search(document.getElementById('searchID').value)">Search</button> 
+		<div id="result">
+		</div>
+		<script>
+		var tableHead = "<table border=\"1px\">";
+		var columnHead = "<tr><td align=\"center\">Exam Rooms</td><td align=\"center\">Subject</td><td align=\"center\">Seat Number</td><td align=\"center\">Time</td></tr>";
+		var columnData = "";
+		var tableEnd = "</table>";
+		
+			function search(appID){
+				var xmlhttp = new XMLHttpRequest();
+				var url = "http://127.0.0.1:80/project/getQuery9.php?appID="+appID;
+
+				xmlhttp.onreadystatechange=function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						displayResponse(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+
+			function displayResponse(response) {
+			var arr = JSON.parse(response);
+			var i;
+			columnData = "";
+				for(i = 0; i < arr.length; i++) {
+					columnData += "<tr><td align=\"center\">"+arr[i].Room+"</td><td align=\"center\">"+arr[i].SubjectName+"</td><td align=\"center\">"+arr[i].SeatNo+"</td><td align=\"center\">"+arr[i].Tim+"</td></tr>"
+				}
+				document.getElementById("result").innerHTML = tableHead+columnHead+columnData+tableEnd;
+			}
+		
+		</script>
+	</body>
+</html>
