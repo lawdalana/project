@@ -1,10 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+	 <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="text.css">
+    <link href="carousel.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+.t{
+	margin-top:50px;
+}
+</style>
 </head>
 <body>
-<div id="content">
-	<table border="1px">
+ <div>
+    <nav class="navbar navbar-inverse navbar-fixed-top " >
+      <div class="container">
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav ">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        </div>
+      </div>
+     </nav>
+ </div>
+<div class ="t container jumbotron"id="content">
+	<table class="table" border="1px">
 		<col width="400">
 		<col width="400">
 		<tr>
@@ -28,7 +55,6 @@
 			</td>
 		</tr>
 	</table>
-	<a href="/project/home.html">Back to Home</a>
 </div>
 <script type="text/javascript">
     var staffType = <?php echo $_POST['staffType'];?>;
