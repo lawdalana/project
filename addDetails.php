@@ -10,24 +10,42 @@ echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 for($i=1;$i<=$rCount;$i++)
 {
- for($j=1;$j<=$cCount+1;$j++)	
- {
- 	$col = "attr".$j."r".$i;
- 	$cell = $_GET[$col];
- 	$app = "attr1r".$i;
- 	$appID =$_GET[$app];
- 	$sql = "INSERT INTO eventdetails  (EventID,AttributeValue,AttributeNo,AppID) VALUES (".$event_id.",'".$cell."',".$j.",'".$appID."')";
- 	//echo($sql);
- 	//$con->query($sql);
- 	if ($con->query($sql) === TRUE) {
- 	   echo "Column $i created successfully\n";
-	} 
-	else {
-  	  echo "Error: " . $sql . "<br/>" . $con->error;
+	$app = "attr1r".$i;
+ 	$appID = $_GET[$app];
+	$state = "appIDr".$i;
+	$stateS = $_GET[$state];
+	echo($appID."\n");
+	if($appID == ""){
+		if($stateS != "NEW"){
+			$sql = "DELETE FROM eventdetails WHERE EventID=".$event_id." AND AppID = '".$stateS."';";
+			$con->query($sql);
+		}
 	}
- }
+	else{
+		for($j=2;$j<=$cCount+1;$j++)	
+		 {
+			 $sql = "SELECT * FROM eventdetails WHERE AttributeNo=".($j-1)." AND EventID=".$event_id." AND AppID='".$appID."'";
+			 echo($sql);
+			 $result = $con->query($sql);
+			 $rc = "attr".($j)."r".$i;
+			 $value = $_GET[$rc];
+			 if($result->fetch_array(MYSQLI_ASSOC)){
+				 echo ("Found\n");
+				 /* Update */
+				 $sql = "UPDATE eventdetails SET AttributeValue='".$value."' WHERE "."AttributeNo=".($j-1)." AND EventID=".$event_id." AND AppID='".$appID."'";
+				 echo ("___".$sql."\n");
+			 }
+			 else{
+				 echo ("Not Found\n");
+				 /* Add */
+				 $sql = "INSERT INTO eventdetails(EventID,AttributeValue,AttributeNo,AppID) VALUES (".$event_id.",'".$value."',".($j-1).",'".$appID."')";
+				echo ("___".$sql."\n");
+			 }
+			 $con->query($sql);
+		 }
+	}
 }
 
 $con->close();
-header( "Refresh:3; url=http://127.0.0.1/project/form3.html", true, 303);
+header( "Refresh:3; url=http://127.0.0.1:80/project/form3.html", true, 303);
 ?>

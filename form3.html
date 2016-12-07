@@ -63,7 +63,7 @@ var pNR=0;
 var tableBegin="<table id=\"myTable\" border=\"1px\"";
 var tableHead="";
 var tableContent="";
-var columnCount = 0;
+var columnCount = 1;
 var recordCount=1;
 var tableEnd="</table><input type =\"hidden\" id=\"col\" name=\"column\" value=\""+pNR+"\">";
 document.getElementById("ContentWithHead").innerHTML = "<table id=\"myTable\"><tr><th>AppID</th><th>Column 1</th><th>Column 2</th></tr><tr><td></td><td></td><td></td></tr></table>"
@@ -149,28 +149,30 @@ function AddTableDetail(response){
     var currentRow = "<tr>";
     var arr = JSON.parse(response);
     previous = arr[i].AppID;
-    currentRow+="<td><input type =\"text\" id=\"col\" name=\"attr1r1\" value=\""+arr[i].AppID+"\"></td>";
     for(i=0;i<arr.length;i++)
     {
         if(arr[i].AppID == previous){
-            columnCount++;
+            if(columnCount == 1){
+				currentRow+="<tr><td><input type =\"text\" id=\"col\" name=\"attr1r"+recordCount+"\" value=\""+arr[i].AppID+"\"></td>";
+			}
+			columnCount++;
             currentRow += '<td><input type=\"text\" name=\"attr'+(columnCount)+'r'+recordCount+'\" value=\"'+arr[i].AttributeValue+'\"></td>';
-        }
+		}
         else{
-            recordCount++;
-            for(j=0;j<x-columnCount;j++)
+            for(j=0;j<x-columnCount-1;j++)
             {
                 currentRow += '<td><input type=\"text\" name=\"attr'+(j+columnCount)+'r'+recordCount+'\"></td>';
             }
-            columnCount = 0;
-            all+=currentRow;
-            currentRow+="<td><input type =\"hidden\" id=\"col\" name=\"attr1r"+recordCount+"\" value=\""+arr[i].AppID+"\"></td></tr>";
-            currentRow="<tr>";
+            columnCount = 1;
+			currentRow+="<td><input type =\"hidden\" id=\"col\" name=\"appIDr"+recordCount+"\" value=\""+arr[i-1].AppID+"\"></td></tr>";
+			all+=currentRow;
+			recordCount++;
+            currentRow="";
             previous = arr[i].AppID;
-            i--;
+			i--;
         }
     }
-    for(j=0;j<x-columnCount-1;j++)
+    for(j=1;j<x-columnCount-1;j++)
             {
                 currentRow += '<td><input type=\"text\" name=\"attr'+(j+columnCount)+'r'+recordCount+'\"></td>';
             }
@@ -248,7 +250,7 @@ function addRow(){
         //tableContent += "<td><input type=\"text\" name=\"attr"+i+"\"></td>";
         tableContent += "<td><input type=\"text\" name=\"attr"+(i)+'r'+recordCount+"\"></td>";
     }
-    tableContent += "</tr>";
+	tableContent += "<td><input type =\"hidden\" id=\"col\" name=\"appIDr"+recordCount+"\" value=\""+"NEW"+"\"></td></tr>";
     document.getElementById("rCount").value = recordCount;
     document.getElementById("ContentWithHead").innerHTML = tableBegin+tableHead+tableContent+tableEnd;
 }
