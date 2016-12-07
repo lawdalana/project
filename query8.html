@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Data analysis</h1>
+		<h2>Department with the most students taking each preliminary course</h2>
+		<div id="result">
+		</div>
+		<script>
+		var tableHead = "<table border=\"1px\">";
+		var columnHead = "<tr><th align=\"center\">Preliminary Course</th><th align=\"center\">Faculty</th><th align=\"center\">Department</th></tr>";
+		var columnData = "";
+		var tableEnd = "</table>";
+		search()
+			function search(){
+				var xmlhttp = new XMLHttpRequest();
+				var url = "http://127.0.0.1:80/project/getQuery8.php";
+
+				xmlhttp.onreadystatechange=function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						displayResponse(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+
+			function displayResponse(response) {
+			var arr = JSON.parse(response);
+			var i;
+			columnData = "";
+				for(i = 0; i < arr.length; i++) {
+					columnData += "<tr><td align=\"center\">"+arr[i].cos+"</td><td align=\"center\">"+arr[i].fac+"</td><td align=\"center\">"+arr[i].dep+"</td></tr>"
+				}
+				document.getElementById("result").innerHTML = tableHead+columnHead+columnData+tableEnd;
+			}
+		
+		</script>
+	</body>
+</html>

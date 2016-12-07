@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Data analysis</h1>
+		<h2>Students from a given department that has to take a preliminary course</h2>
+		Enter CourseID: <input type="text" id="searchID"> 
+		Enter Department: <input type="text" id="searchDep"><button type="button" onclick="search(document.getElementById('searchID').value,document.getElementById('searchDep').value)">Search</button> 
+		<div id="result">
+		</div>
+		<script>
+		var tableHead = "<table border=\"1px\">";
+		var columnHead = "<tr><th align=\"center\">StudentID</th><th align=\"center\">fName</th><th align=\"center\">lName</th><th align=\"center\">Program</th><th align=\"center\">Department</th></tr>";
+		var columnData = "";
+		var tableEnd = "</table>";
+		
+			function search(courseID,dep){
+				var xmlhttp = new XMLHttpRequest();
+				var url = "http://127.0.0.1:80/project/getQuery5.php?courseID="+courseID+"&depart="+dep;
+
+				xmlhttp.onreadystatechange=function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						displayResponse(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("GET", url, true);
+				xmlhttp.send();
+			}
+
+			function displayResponse(response) {
+			var arr = JSON.parse(response);
+			var i;
+			columnData = "";
+				for(i = 0; i < arr.length; i++) {
+					columnData += "<tr><td align=\"center\">"+arr[i].StudentID+"</td><td align=\"center\">"+arr[i].fName+"</td><td align=\"center\">"+arr[i].lName+"</td><td align=\"center\">"+arr[i].Program+"</td><td align=\"center\">"+arr[i].Department+"</td></tr>"
+				}
+				document.getElementById("result").innerHTML = tableHead+columnHead+columnData+tableEnd;
+			}
+		
+		</script>
+	</body>
+</html>
