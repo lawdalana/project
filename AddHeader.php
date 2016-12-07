@@ -22,7 +22,6 @@ for($i=1;$i<=$count;$i++)
 	$row = mysqli_fetch_array($result_select);
     $CheckHeaderTitle = $row["HeaderTitle"];
     $CheckHeaderNo = $row["HeaderNo"];
-    echo $CheckHeaderTitle;
  $col = "Column".$i;	
  $column = $_GET[$col];
  if($CheckHeaderTitle == $column && $CheckHeaderNo==$i)
@@ -49,4 +48,5 @@ else{
 
 
 $con->close();
+header( "Refresh:3; url=http://127.0.0.1/project/form3.html", true, 303);
 ?>
