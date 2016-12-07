@@ -1,4 +1,23 @@
 <html>
+<style>
+
+h1 {
+    border-bottom: 3px solid #cc9900;
+    color: #996600;
+    font-size: 30px;
+}
+table, th , td {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding: 5px;
+}
+table tr:nth-child(odd) {
+    background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+</style>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
@@ -18,23 +37,36 @@
 
  </div>
 
- <input name="name" class="name required" type="button" onclick="AddColumn()" value="More Column" /> <br><br>
- <input size=10 type="hidden" id="maxrow" name = "i" value = "1" ><br>
+ <input name="name" class="name required" type="button" onclick="AddColumn()" value="More Column" />
+ <input size=10 type="hidden" id="maxrow" name = "i" value = "1" >
   <input size=10 type="hidden" id="event_id" name = "event_id" value = "1" ><br>
    <input type="submit" value="Submit Column">   
+<br><br>
 </form>
+<form action="addDetails.php" method="get">
+    <div id="ContentWithHead">
+        
+    </div>
+        <input type ="hidden" id="eveIDD" name="eventID" value="">
+        <input type ="hidden" id="rCount" name="rowCount" value="">
+        <input type ="hidden" id="cCount" name="columnCount" value="">
+    <br>
+    <input name="addEventDetails" type="submit" value="Submit Table" />
+</form>
+<button onclick="addRow()">Add Row</button>
 
 
 
-<br>
-    <div id="table"> Data: 
-        <script>
-        document.write('<table id="myTable"><tr><th>AppID/StudentID</th><th>Column 1</th><th>Column 2</th></tr><tr><td></td><td></td><td></td><td></td></tr></table>')
-        </script> 
-    </div> 
 
 <script>
 var pNR=0;
+var tableBegin="<table id=\"myTable\" border=\"1px\"";
+var tableHead="";
+var tableContent="";
+var columnCount = 0;
+var recordCount=1;
+var tableEnd="</table><input type =\"hidden\" id=\"col\" name=\"column\" value=\""+pNR+"\">";
+document.getElementById("ContentWithHead").innerHTML = "<table id=\"myTable\"><tr><th>AppID</th><th>Column 1</th><th>Column 2</th></tr><tr><td></td><td></td><td></td></tr></table>"
 loadevent();
 function loadevent(){
     var xmlhttp = new XMLHttpRequest();
@@ -53,15 +85,27 @@ function loadEventHeader(eveID){
     xmlhttp.onreadystatechange=function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             Get_exist_eventHeader(xmlhttp.responseText);
+            AddTableHeader(xmlhttp.responseText);
+            document.getElementById("eveIDD").value = eveID;
         }
     }
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
 }
-
+function loadEventDetail(eveID){
+    var xmlhttp = new XMLHttpRequest();
+    var url = "http://127.0.0.1:80/project/getEventDetail.php/?eventID="+eveID;
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            AddTableDetail(xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
 function Get_exist_event(response) {
     var i;
-    var out = "EventName:<select id=\"EventName\" name=\"EventName\" class=\"required-entry\" onchange=\"javascript: EnableEvent(this.options[this.selectedIndex].value ); loadEventHeader(this.options[this.selectedIndex].value);\"><option value=\"Select EventName\">Select EventName</option>";
+    var out = "EventName:<select id=\"EventName\" name=\"EventName\" class=\"required-entry\" onchange=\"javascript: EnableEvent(this.options[this.selectedIndex].value ); loadEventHeader(this.options[this.selectedIndex].value); loadEventDetail(this.options[this.selectedIndex].value);\"><option value=\"Select EventName\">Select EventName</option>";
     var arr = JSON.parse(response);
     for(i = 0; i < arr.length; i++) {
         out += '<option value="'+arr[i].EventID+'">'+ arr[i].EventName+'</option>';
@@ -69,7 +113,6 @@ function Get_exist_event(response) {
     out += "</select><\/script>"; 
     document.getElementById("e_event").innerHTML = out;
 }
-
 function Get_exist_eventHeader(response) {
     var i=0;
     var out="";
@@ -79,11 +122,65 @@ function Get_exist_eventHeader(response) {
     	pNR=i+1;
         out +=  'Column '+pNR+':<input name=\"Column'+pNR+'\" type=\"text\" value =\"'+arr[i].HeaderTitle+'\"><br>';
     }
+    document.getElementById("cCount").value = pNR;
     out += "<input type =\"hidden\" id=\"col\" name=\"column\" value=\""+pNR+"\"></select>"; 
     document.getElementById("maxrow").value = pNR;
     document.getElementById("headerTitle").innerHTML = out;
 }
+function AddTableHeader(response) {
+    var i;
+    tableHead = '<tr><th>AppID</th>';
+    var arr = JSON.parse(response);
+    for(i = 0; i < arr.length; i++) {
+        tableHead += '<th>'+arr[i].HeaderTitle+'</th>';
+    }
+    tableHead += "<td></td></tr>"; 
+    document.getElementById("ContentWithHead").innerHTML = tableBegin+tableHead+tableContent+tableEnd;
 
+}
+function AddTableDetail(response){
+    var i =0;
+    var previous = 0;
+    var columnCount=1;
+    var j=0;
+    recordCount = 1;
+    var x = document.getElementById("myTable").rows[0].cells.length;
+    var all = "";
+    var currentRow = "<tr>";
+    var arr = JSON.parse(response);
+    previous = arr[i].AppID;
+    currentRow+="<td><input type =\"text\" id=\"col\" name=\"attr1r1\" value=\""+arr[i].AppID+"\"></td>";
+    for(i=0;i<arr.length;i++)
+    {
+        if(arr[i].AppID == previous){
+            columnCount++;
+            currentRow += '<td><input type=\"text\" name=\"attr'+(columnCount)+'r'+recordCount+'\" value=\"'+arr[i].AttributeValue+'\"></td>';
+        }
+        else{
+            recordCount++;
+            for(j=0;j<x-columnCount;j++)
+            {
+                currentRow += '<td><input type=\"text\" name=\"attr'+(j+columnCount)+'r'+recordCount+'\"></td>';
+            }
+            columnCount = 0;
+            all+=currentRow;
+            currentRow+="<td><input type =\"hidden\" id=\"col\" name=\"attr1r"+recordCount+"\" value=\""+arr[i].AppID+"\"></td></tr>";
+            currentRow="<tr>";
+            previous = arr[i].AppID;
+            i--;
+        }
+    }
+    for(j=0;j<x-columnCount-1;j++)
+            {
+                currentRow += '<td><input type=\"text\" name=\"attr'+(j+columnCount)+'r'+recordCount+'\"></td>';
+            }
+    currentRow+="<td><input type =\"hidden\" id=\"col\" name=\"appIDr"+recordCount+"\" value=\""+arr[i-1].AppID+"\"></td></tr>";
+    all += currentRow;
+    tableContent = all;
+    document.getElementById("rCount").value = recordCount;
+    document.getElementById("ContentWithHead").innerHTML = tableBegin+tableHead+tableContent+tableEnd;
+
+}
 /*function AddColumn(){
     var index = document.getElementById("col").value;
 	var out="";
@@ -141,6 +238,20 @@ function change_column(){
 i++
 document.getElementById("column").innerHTML = out;
 }*/
+
+function addRow(){
+    var i;
+    var x = document.getElementById("myTable").rows[0].cells.length;
+    recordCount++;
+    tableContent += '<tr><td><input type=\"text\" name=\"attr'+(1)+'r'+recordCount+'\" value=\"\"></td>';
+    for(i=2;i<x;i++){
+        //tableContent += "<td><input type=\"text\" name=\"attr"+i+"\"></td>";
+        tableContent += "<td><input type=\"text\" name=\"attr"+(i)+'r'+recordCount+"\"></td>";
+    }
+    tableContent += "</tr>";
+    document.getElementById("rCount").value = recordCount;
+    document.getElementById("ContentWithHead").innerHTML = tableBegin+tableHead+tableContent+tableEnd;
+}
 
 </script>
 </body>
