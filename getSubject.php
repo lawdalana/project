@@ -9,7 +9,9 @@ $result = $con->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-    	if ($outp != "[") {$outp .= ",";}
+    	if ($outp != "[") {
+    	    $outp .= ",";
+    	}
     	$outp .= '{"SubjectName":"'. $row["SubjectName"].'",';
     	$outp .= '"SubjectID":"'. $row["SubjectID"]. '",';
     	$outp .= '"Year":"'. $row["ED_year"]. '"}';
